@@ -28,60 +28,80 @@ def load(filename):
 
 
 if __name__ == "__main__":
-    menu = int(input("""Выберите пункт меню:
-    1 - Ввод массива вручную
-    2 - Генерация массива случайных чисел
-    3 - Загрузка массива из файла
-    """))
-    arr = list()
-    if menu == 1:
-        inp = input("Введите массив целых чисел через запятую -> ")
-        arr = inp.split(',')
-        for i in range(len(arr)):
-            arr[i] = arr[i].strip()
-    elif menu == 2:
-        n = randint(3, 30)
-        arr = [randint(-100, 100) for i in range(n)]
+    while True:
+        menu = int(input("""
+Выберите пункт меню:
+1 - Ввод массива вручную
+2 - Генерация массива случайных чисел
+3 - Загрузка массива из файла
+Другое число - Выход из программы
+"""))
+        arr = list()
+        match menu:
+            case 1:
+                inp = input("Введите массив целых чисел через запятую -> ")
+                arr = inp.split(',')
+                flag = False
+                for i in range(len(arr)):
+                    try:
+                        arr[i] = int(arr[i].strip())
+                    except:
+                        print("Вы ввели не целые числа!")
+                        flag = True
+                        break
+                if flag:
+                    continue
+            case 2:
+                n = randint(3, 30)
+                arr = [randint(-100, 100) for i in range(n)]
+            case 3:
+                name = input("Введите имя файла: ")
+                try:
+                    arr = load(name)
+                except:
+                    print("Неверное имя файла")
+                    continue
+            case _:
+                break
 
-    elif menu == 3:
-        name = input("Введите имя файла: ")
-        try:
-            arr = load(name)
-        except:
-            print("Неверное имя файла")
-            exit(1)
+        print(arr)
+        sorted_arr = sort(arr)
+        print(sorted_arr)
 
-    print(arr)
-    sorted_arr = sort(arr)
-    print(sorted_arr)
-
-    menu = int(input("""Выберите пункт меню:
-    1 - Сохранить начальный массив в файл
-    2 - Сохранить отсортированный массив в файл
-    3 - Сохранить оба массива в файлы
-    4 - Не сохранять
-    """))
-
-    if menu == 1:
-        name = input("Введите имя файла -> ")
-        try:
-            save(arr, name)
-        except:
-            print("Неверное имя файла")
-    elif menu == 2:
-        name = input("Введите имя файла -> ")
-        try:
-            save(sorted_arr, name)
-        except:
-            print("Неверное имя файла")
-    elif menu == 3:
-        name = input("Введите имя файла для сохранения начального массива")
-        try:
-            save(arr, name)
-        except:
-            print("Неверное имя файла -> ")
-        name = input("Введите имя файла для сохранения отсортированного массива")
-        try:
-            save(sorted_arr, name)
-        except:
-            print("Неверное имя файла")
+        while True:
+            menu = int(input("""Выберите пункт меню:
+1 - Сохранить начальный массив в файл
+2 - Сохранить отсортированный массив в файл
+3 - Сохранить оба массива в файлы
+Другое число - Не сохранять
+"""))
+            match menu:
+                case 1:
+                    name = input("Введите имя файла -> ")
+                    try:
+                        save(arr, name)
+                    except:
+                        print("Неверное имя файла")
+                        continue
+                case 2:
+                    name = input("Введите имя файла -> ")
+                    try:
+                        save(sorted_arr, name)
+                    except:
+                        print("Неверное имя файла")
+                        continue
+                case 3:
+                    name = input("Введите имя файла для сохранения начального массива")
+                    try:
+                        save(arr, name)
+                    except:
+                        print("Неверное имя файла -> ")
+                        continue
+                    name = input("Введите имя файла для сохранения отсортированного массива")
+                    try:
+                        save(sorted_arr, name)
+                    except:
+                        print("Неверное имя файла")
+                        continue
+                case _:
+                    break
