@@ -66,11 +66,12 @@ def test_add_arrays(setup_test_db, num_arrays):
     assert success and count == num_arrays
 
 
-'''@pytest.mark.parametrize("num_arrays", [100, 1000, 10000])
+@pytest.mark.parametrize("num_arrays", [100, 1000, 10000])
 def test_load_and_sort_100_arrays(setup_test_db, num_arrays):
+    test_add_arrays(setup_test_db, num_arrays)
     user_id = 1  # тестовый пользователь
 
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(TEST_DB)
     cur = conn.cursor()
 
     # Получаем все массивы пользователя
@@ -92,7 +93,7 @@ def test_load_and_sort_100_arrays(setup_test_db, num_arrays):
         for row in selected_rows:
             arr = list(map(int, row[0].split(',')))
             t0 = time.time()
-            sorted_arr = insertion_sort(arr)
+            sorted_arr = main.insertion_sort(arr)
             t1 = time.time()
             total_sort_time += (t1 - t0)
     except Exception as e:
@@ -106,4 +107,34 @@ def test_load_and_sort_100_arrays(setup_test_db, num_arrays):
     print(f"Общее время выполнения теста: {elapsed:.2f} сек")
     print(f"Среднее время сортировки 1 массива: {avg_time:.4f} сек" if avg_time else "")
 
-    assert success'''
+    assert success
+
+
+def test_clear_user_arrays(setup_test_db):
+    user_id = 1  # тестовый пользователь
+
+    start_time = time.time()
+    success = True
+
+    try:
+        main.clear_array(user_id)
+    except Exception as e:
+        print("Ошибка при очистке базы данных:", e)
+        success = False
+
+    elapsed = time.time() - start_time
+
+    # Проверка, что база действительно очищена
+    conn = sqlite3.connect(main.DB_NAME)
+    cur = conn.cursor()
+    cur.execute("SELECT COUNT(*) FROM user_arrays WHERE user_id=?", (user_id,))
+    count = cur.fetchone()[0]
+    conn.close()
+
+    if count != 0:
+        success = False
+
+    print(f"Тест очистки базы данных: {'Успешно' if success else 'Не успешно'}")
+    print(f"Общее время выполнения теста: {elapsed:.2f} сек")
+
+    assert success
