@@ -15,9 +15,10 @@ def sort(arr):
     return sort_arr
 
 
-def save(array, filename):
+def save(str_save, filename):
     with open(filename, "w", encoding="utf-8") as f:
-        f.write(" ".join(str(x) for x in array))
+        str_save
+        f.write(str_save)
 
 
 def load(filename):
@@ -55,7 +56,8 @@ if __name__ == "__main__":
                 n = randint(3, 30)
                 arr = [randint(-100, 100) for i in range(n)]
             case 3:
-                name = input("Введите имя файла: ")
+                name = input("Введи"
+                             "те имя файла: ")
                 try:
                     arr = load(name)
                 except:
@@ -77,31 +79,32 @@ if __name__ == "__main__":
 """))
             match menu:
                 case 1:
-                    name = input("Введите имя файла -> ")
+                    name = input("Введите путь файла -> ")
                     try:
-                        save(arr, name)
+                        save(" ".join(str(x) for x in arr), name)
+                        print("Успешно\n")
+                        break
                     except:
-                        print("Неверное имя файла")
+                        print("Неверный путь файла")
                         continue
                 case 2:
-                    name = input("Введите имя файла -> ")
+                    name = input("Введите путь файла -> ")
                     try:
-                        save(sorted_arr, name)
+                        save(" ".join(str(x) for x in sorted_arr), name)
+                        print("Успешно\n")
+                        break
                     except:
-                        print("Неверное имя файла")
+                        print("Неверный путь файла")
                         continue
                 case 3:
-                    name = input("Введите имя файла для сохранения начального массива")
+                    name = input("Введите путь файла для сохранения массивов -> ")
+                    save_str = 'Начальный массив: ' + " ".join(str(x) for x in arr) + '\nОтсортированный массив: '+ " ".join(str(x) for x in sorted_arr)
                     try:
-                        save(arr, name)
+                        save(save_str, name)
+                        print("Успешно\n")
+                        break
                     except:
-                        print("Неверное имя файла -> ")
-                        continue
-                    name = input("Введите имя файла для сохранения отсортированного массива")
-                    try:
-                        save(sorted_arr, name)
-                    except:
-                        print("Неверное имя файла")
+                        print("Неверный путь файла")
                         continue
                 case _:
                     break
