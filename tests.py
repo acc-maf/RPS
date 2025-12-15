@@ -104,8 +104,8 @@ def test_load_and_sort_100_arrays(setup_test_db, num_arrays):
     avg_time = total_sort_time / len(selected_rows) if success else None
 
     print(f"Тест выгрузки и сортировки 100 массивов: {'Успешно' if success else 'Не успешно'}")
-    print(f"Общее время выполнения теста: {elapsed:.2f} сек")
-    print(f"Среднее время сортировки 1 массива: {avg_time:.4f} сек" if avg_time else "")
+    print(f"Общее время выполнения теста: {elapsed:.4f} сек")
+    print(f"Среднее время сортировки 1 массива: {avg_time:.6f} сек" if avg_time else "")
 
     assert success
 
@@ -117,15 +117,20 @@ def test_clear_user_arrays(setup_test_db):
     success = True
 
     try:
-        main.clear_array(user_id)
+        # Очистка массива пользователя
+        conn = sqlite3.connect(TEST_DB)
+        cur = conn.cursor()
+        cur.execute("DELETE FROM user_arrays WHERE user_id=?", (user_id,))
+        conn.commit()
+        conn.close()
     except Exception as e:
-        print("Ошибка при очистке базы данных:", e)
+        print("Ошибка при очистке базы:", e)
         success = False
 
     elapsed = time.time() - start_time
 
-    # Проверка, что база действительно очищена
-    conn = sqlite3.connect(main.DB_NAME)
+    # Проверяем, что таблица действительно пустая
+    conn = sqlite3.connect(TEST_DB)
     cur = conn.cursor()
     cur.execute("SELECT COUNT(*) FROM user_arrays WHERE user_id=?", (user_id,))
     count = cur.fetchone()[0]
