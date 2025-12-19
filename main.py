@@ -5,6 +5,7 @@ from tkinter import ttk, messagebox
 
 DB_NAME = "arrays.db"
 
+
 # ---------------------- База данных ----------------------
 
 def init_db():
@@ -71,6 +72,14 @@ def save_array(user_id, arr, sorted_or_not):
         "INSERT INTO user_arrays (user_id, arr, sorted_or_not) VALUES (?, ?, ?)",
         (user_id, ",".join(map(str, arr)), sorted_or_not)
     )
+    conn.commit()
+    conn.close()
+
+
+def clear_array(user_id):
+    conn = sqlite3.connect(DB_NAME)
+    cur = conn.cursor()
+    cur.execute("DELETE FROM user_arrays WHERE user_id=?", (user_id,))
     conn.commit()
     conn.close()
 
@@ -164,6 +173,7 @@ class App(tk.Tk):
         self.refresh_table()
 
         ttk.Button(self, text="Очистить все массивы", command=self.clear_user_arrays).pack(pady=5)
+        ttk.Button(self, text="Справка", command=self.show_help).pack(pady=5)
         ttk.Button(self, text="Выйти", command=self.show_login).pack(pady=5)
 
     # Метод ввода массива (с поля)
@@ -223,12 +233,44 @@ class App(tk.Tk):
 
     def clear_user_arrays(self):
         if messagebox.askyesno("Подтверждение", "Вы действительно хотите удалить все массивы?"):
-            conn = sqlite3.connect(DB_NAME)
-            cur = conn.cursor()
-            cur.execute("DELETE FROM user_arrays WHERE user_id=?", (self.user_id,))
-            conn.commit()
-            conn.close()
+            clear_array(self.user_id)
             self.refresh_table()
+
+    def show_help(self):
+        help_window = tk.Toplevel(self)
+        help_window.title("Справка")
+        help_window.geometry("500x400")
+        help_window.resizable(False, False)
+
+        text = (
+            "Приложение предназначено для работы с массивами целых чисел и базой данных.\n\n"
+
+            "Основные возможности:\n"
+            "• Регистрация и авторизация пользователя.\n"
+            "• Ввод массива целых чисел вручную.\n"
+            "• Генерация случайного массива целых чисел.\n"
+            "• Сортировка массива алгоритмом вставок.\n"
+            "• Сохранение исходного и отсортированного массивов.\n"
+            "• Просмотр сохранённых массивов пользователя.\n"
+            "• Очистка базы данных пользователя.\n\n"
+
+            "Порядок работы:\n"
+            "1. Введите массив вручную или сгенерируйте случайный.\n"
+            "2. Нажмите кнопку «Ввести».\n"
+            "3. При необходимости отсортируйте массив.\n"
+            "4. Сохраните исходный или отсортированный массив.\n\n"
+
+            "Формат ввода массива:\n"
+            "Целые числа, разделённые пробелами.\n"
+            "Пример: 5 -3 10 8 0"
+        )
+
+        text_widget = tk.Text(help_window, wrap=tk.WORD, padx=10, pady=10)
+        text_widget.insert(tk.END, text)
+        text_widget.config(state=tk.DISABLED)
+        text_widget.pack(expand=True, fill=tk.BOTH)
+
+        ttk.Button(help_window, text="Закрыть", command=help_window.destroy).pack(pady=10)
 
 
 if __name__ == "__main__":

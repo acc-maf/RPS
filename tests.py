@@ -53,7 +53,7 @@ def test_add_arrays(setup_test_db, num_arrays):
     elapsed = time.time() - start_time
 
     print(
-        f"Добавление {num_arrays} массивов прошло: {'Успешно' if success else 'Не успешно'}; Время: {elapsed:.2f} сек")
+        f"\nДобавление {num_arrays} массивов прошло: {'Успешно' if success else 'Не успешно'}\nВремя: {elapsed:.2f} сек")
 
     # Проверяем количество записей
     conn = sqlite3.connect(TEST_DB)
@@ -61,13 +61,12 @@ def test_add_arrays(setup_test_db, num_arrays):
     cur.execute("SELECT COUNT(*) FROM user_arrays")
     count = cur.fetchall()[0][0]
     conn.close()
-    print(count, num_arrays)
 
     assert success and count == num_arrays
 
 
 @pytest.mark.parametrize("num_arrays", [100, 1000, 10000])
-def test_load_and_sort_100_arrays(setup_test_db, num_arrays):
+def test_load_and_sort_arrays(setup_test_db, num_arrays):
     test_add_arrays(setup_test_db, num_arrays)
     user_id = 1  # тестовый пользователь
 
@@ -103,7 +102,7 @@ def test_load_and_sort_100_arrays(setup_test_db, num_arrays):
     elapsed = time.time() - start_time
     avg_time = total_sort_time / len(selected_rows) if success else None
 
-    print(f"Тест выгрузки и сортировки 100 массивов: {'Успешно' if success else 'Не успешно'}")
+    print(f"Тест выгрузки и сортировки {num_arrays} массивов: {'Успешно' if success else 'Не успешно'}")
     print(f"Общее время выполнения теста: {elapsed:.4f} сек")
     print(f"Среднее время сортировки 1 массива: {avg_time:.6f} сек" if avg_time else "")
 
