@@ -170,6 +170,8 @@ class App(tk.Tk):
         self.tree.column("sorted", width=100)
         self.tree.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
+        self.tree.bind("<Double-1>", self.copy_array_from_table)
+
         self.refresh_table()
 
         ttk.Button(self, text="Очистить все массивы", command=self.clear_user_arrays).pack(pady=5)
@@ -198,6 +200,20 @@ class App(tk.Tk):
         arr = [random.randint(-100, 100) for _ in range(random.randint(5, 15))]
         self.array_entry.delete(0, tk.END)
         self.array_entry.insert(0, " ".join(map(str, arr)))
+
+    def copy_array_from_table(self, event):
+        selected = self.tree.selection()
+        if not selected:
+            return
+
+        values = self.tree.item(selected[0], "values")
+        array_str = values[0]  # строка вида "1,2,3,-5"
+
+        # Преобразуем формат: запятые → пробелы
+        array_with_spaces = array_str.replace(",", " ")
+
+        self.array_entry.delete(0, tk.END)
+        self.array_entry.insert(0, array_with_spaces)
 
     def refresh_table(self):
         for row in self.tree.get_children():
