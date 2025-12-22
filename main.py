@@ -102,7 +102,7 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Работа с массивами")
-        self.geometry("800x500")
+        self.geometry("250x220")
         self.user_id = None
         self.show_login()
 
@@ -143,6 +143,7 @@ class App(tk.Tk):
     # ---------- Основное окно ----------
     def show_main(self):
         self.clear()
+        self.geometry("900x600")
 
         input_frame = ttk.LabelFrame(self, text="Ввод массива")
         input_frame.pack(fill=tk.X, padx=10, pady=10)
@@ -180,6 +181,15 @@ class App(tk.Tk):
 
     # Метод ввода массива (с поля)
     def input_array(self):
+        text = self.array_entry.get().strip()
+
+        # Проверка на пустой ввод
+        if not text:
+            messagebox.showwarning(
+                "Пустой массив",
+                "Массив пуст. Введите целые числа через пробел или сгенерируйте массив."
+            )
+            return
         try:
             arr = list(map(int, self.array_entry.get().split()))
             self.current_array = arr
